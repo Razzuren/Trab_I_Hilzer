@@ -15,7 +15,7 @@ public class Cliente implements Runnable{
             try {
                 Barbearia.LOTACAO++;
                 Barbearia.sofa.acquire();
-                System.out.println("Cliente" + id + " sentou");
+                System.out.println("Cliente" + id + " sentou no sofá");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -23,26 +23,15 @@ public class Cliente implements Runnable{
             try {
                 Barbearia.cadeira.acquire();
                 Barbearia.sofa.release();
+                System.out.println("Cliente" + id + " sentou na cadeira");
 
-                for(Barbeiro b : Barbearia.barbeiros){
-                    if (!b.ocupado){
-                        b.ocupado=true;
-                        b.cliente_atual = id;
-                    }
-                    System.err.println(b.id);
-                }
-
+                Barbearia.barbeiros.get(Barbearia.ID_BARBEIRO_LIVRE).ocupado=true;
+                Barbearia.barbeiros.get(Barbearia.ID_BARBEIRO_LIVRE).cliente_atual=id;
+                if(id<2) Barbearia.ID_BARBEIRO_LIVRE++;
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-            System.out.println("Cliente" + id + " foi atendido");
-            Barbearia.cadeira.release();
-            Barbearia.LOTACAO--;
-
-        } else {
-            System.out.println("Não haviam lugares.");
         }
     }
 
