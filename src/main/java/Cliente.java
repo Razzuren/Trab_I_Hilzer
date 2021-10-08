@@ -1,38 +1,44 @@
-import java.util.concurrent.BrokenBarrierException;
-
 public class Cliente implements Runnable{
 
+    //Váriáveis de Instância
     int id;
+    Barbearia barbearia;
 
-    public Cliente (int id) {
+    //Construtor
+    public Cliente (int id, Barbearia barbearia) {
+
         this.id = id;
+        this.barbearia = barbearia;
     }
 
     @Override
     public void run()  {
-        if(Barbearia.LOTACAO < 20){
-            System.out.println("Cliente" + id + " Chegou");
-            try {
-                Barbearia.LOTACAO++;
-                Barbearia.sofa.acquire();
-                System.out.println("Cliente" + id + " sentou no sofá");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
-            try {
-                Barbearia.cadeira.acquire();
-                Barbearia.sofa.release();
-                System.out.println("Cliente" + id + " sentou na cadeira");
+        System.out.println("Cliente" + id + " Chegou");
 
-                Barbearia.barbeiros.get(Barbearia.ID_BARBEIRO_LIVRE).ocupado=true;
-                Barbearia.barbeiros.get(Barbearia.ID_BARBEIRO_LIVRE).cliente_atual=id;
-                if(id<2) Barbearia.ID_BARBEIRO_LIVRE++;
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        //Atualiza a lotação da barbearia
+        // e solicita um lugar no sofa
+        try {
+            barbearia.LOTACAO++;
+            barbearia.sofa.acquire();
+            System.out.println("Cliente" + id + " sentou no sofá");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
+        //Solicita uma cadeira de atendimento
+        //e libera um lugar no sofá
+        try {
+            barbearia.cadeira.acquire();
+            barbearia.barbeiros.get(barbearia.ID_BARBEIRO_LIVRE).ocupado = true;
+            barbearia.barbeiros.get(barbearia.ID_BARBEIRO_LIVRE).cliente_atual = id;
+            barbearia.sofa.release();
+            System.out.println("Cliente" + id + " sentou na cadeira");
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
