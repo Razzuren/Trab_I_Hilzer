@@ -4,7 +4,7 @@ import java.util.concurrent.Semaphore;
 
 public class Barbearia{
 
-    //Variáveis de Controle e Dimensão
+    //Variáveis de Dimensão
     static volatile boolean ABERTA = true;
     static final int  N_BARBEIROS = 3;
     static final int N_CADEIRAS = 3;
